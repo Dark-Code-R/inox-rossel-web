@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from './componentes-ui/Button';
-import perfilPersonal from '../images/perfil.jpeg';
+import perfilPersonal from '../images/FotoPerfil.png';
 import useFadeInAnimation from '../../hooks/useAnimation';
 
 export default function AboutModal({ closeModal }) {

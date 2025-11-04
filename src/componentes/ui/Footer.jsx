@@ -9,7 +9,7 @@ export default function Footer() {
           <Wrench className="h-6 w-6 text-black" />
           <span className="font-bold text-lg">Inox Rossel</span>
         </a>
-        <p className="mt-4 md:mt-0 text-gray-500">© 2024 Inox Rossel. Todos los derechos reservados.</p>
+        <p className="mt-4 md:mt-0 text-gray-500">© 2025 Inox Rossel. Todos los derechos reservados.</p>
       </div>
     </footer>
   );

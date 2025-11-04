@@ -113,6 +113,61 @@ const projects = [
       "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1747849290/Ropero_Industrial_de_Madera_y_Metal_nmagwb.jpg",
     category: "mobiliario"
   },
+  {
+  title: "Escritorio Industrial con Cajonera",
+  description: "Diseño robusto en metal y madera natural.",
+  fullDescription:
+    "Este escritorio industrial combina estructura metálica pintada en negro con superficies de madera clara, ofreciendo resistencia, funcionalidad y estilo. Incluye tres cajones con tiradores metálicos, ideales para organizar herramientas, documentos o accesorios de oficina. Su diseño artesanal lo hace perfecto para talleres, estudios o ambientes modernos con estética industrial.",
+  imageUrl:
+    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237776/Escritorio_Industrial_jsyafv.jpg", // reemplaza con tu URL final
+  category: "mobiliario"
+},
+{
+  title: "Mostrador de Trabajo Estilo Industrial",
+  description: "Amplia superficie con estanterías integradas.",
+  fullDescription:
+    "Mostrador de trabajo fabricado en estructura metálica negra con detalles en madera laminada. Ofrece gran durabilidad y espacio funcional gracias a sus múltiples repisas abiertas y laterales cerrados. Ideal para negocios, tiendas o talleres que buscan un mobiliario resistente con una presentación moderna y profesional.",
+  imageUrl:
+    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237777/Mostrador_de_Trabajo_zbo4ek.jpg",
+  category: "mobiliario"
+},
+{
+  title: "Estantería Metálica de Exhibición",
+  description: "Estructura modular para exhibir productos o decoración.",
+  fullDescription:
+    "Estantería industrial de gran capacidad, elaborada con marco metálico y paneles de madera. Su diseño abierto facilita la organización y exposición de productos, herramientas o elementos decorativos. Es una solución versátil tanto para hogares modernos como para espacios comerciales.",
+  imageUrl:
+    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237776/Estanter%C3%ADa_Met%C3%A1lica_jmugla.jpg",
+  category: "mobiliario"
+},
+{
+  title: "Rack Industrial Modular",
+  description: "Estructura vertical para almacenamiento pesado.",
+  fullDescription:
+    "Rack industrial de diseño modular, fabricado con tubos metálicos reforzados y repisas de madera. Ofrece gran estabilidad y estética contemporánea, combinando fuerza y elegancia. Ideal para almacenes, talleres o zonas de trabajo donde se requiere orden y durabilidad.",
+  imageUrl:
+    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237776/Rack_Industrial_ir2yed.jpg",
+  category: "mobiliario"
+},
+{
+  title: "Centro de Almacenamiento Multifuncional",
+  description: "Diseño híbrido con módulos y compartimientos.",
+  fullDescription:
+    "Mueble de diseño industrial con múltiples cajones, repisas y compartimientos funcionales. Su estructura en acero negro contrasta con la madera natural, ofreciendo una estética moderna y práctica. Perfecto para organizar herramientas, utensilios o artículos de oficina con un estilo distintivo.",
+  imageUrl:
+    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237777/Centro_de_Almacenamiento_k0cl6v.jpg",
+  category: "mobiliario"
+},
+{
+  title: "Horno Doméstico en Acero Inoxidable Pulido",
+  description: "Diseño compacto, elegante y totalmente inoxidable.",
+  fullDescription:
+    "Horno doméstico de acero inoxidable de alta resistencia, fabricado con acabados pulidos que reflejan una estética profesional. Incluye termómetro integrado y cámara de cocción con aislamiento térmico. Ideal para hogares, panaderías o negocios gastronómicos que buscan calidad, higiene y durabilidad en cada preparación.",
+  imageUrl:
+    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237778/Horno_Dom%C3%A9stico_jzyvut.jpg",
+  category: "equipos-cocina"
+},
+
 ];
 
 // Categorías disponibles

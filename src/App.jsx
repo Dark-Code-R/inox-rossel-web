@@ -1,26 +1,22 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Login from "./Login/Login";
 import HomePage from "./componentes/HomePage";
 import UploadImage from "./componentes/UploadImage";
-import ProjectsPage from "./componentes/Projects/ProjectsPage"; // Cambiado de ProjectsPage a Projects
+import ProjectsPage from "./componentes/Projects/ProjectsPage";
 import ImageGallery from "./componentes/ImageGallery";
 import Register from "./Login/Register";
-import Admin from "./Login/Admin"; // Página para admin
+import Admin from "./Login/Admin";
 import WhatsAppButton from "./componentes/ui/componentes-ui/Contact/whatsapp-button";
 
-// Componente para renderizar el botón de WhatsApp condicionalmente
+// Componente para mostrar el botón de WhatsApp solo en ciertas rutas
 function WhatsAppButtonWrapper() {
   const location = useLocation();
-  
-  // Lista de rutas donde NO queremos mostrar el botón de WhatsApp
-  const excludedRoutes = ['/', '/login', '/register', '/admin'];
-  
-  // Verificar si la ruta actual está en la lista de exclusiones
+  const excludedRoutes = ["/login", "/register", "/admin"];
   const shouldShowButton = !excludedRoutes.includes(location.pathname);
-  
+
   return shouldShowButton ? (
     <WhatsAppButton 
-      phoneNumber="59170416434" 
+      phoneNumber="59170416434"
       message="Hola Rodolfo, vi tu página web y me interesa una cotización para:%0A%0A- Tipo de proyecto:%0A- Descripción:%0A- Plazo estimado:%0A%0AGracias!"
     />
   ) : null;
@@ -30,14 +26,20 @@ function AppRoutes() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Login />} />
+        {/* Ahora el Home es la ruta principal */}
+        <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/upload" element={<UploadImage />} />
         <Route path="/gallery" element={<ImageGallery />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<Admin />} />
+
+        {/* Redirección por defecto a Home si la ruta no existe */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
       <WhatsAppButtonWrapper />
     </>
   );
