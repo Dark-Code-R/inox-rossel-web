@@ -1,0 +1,403 @@
+/* A single row keeps real feedback compact on every screen. */
+.inox-site .testimonials-section.section-space {
+  padding-block: 54px;
+}
+.inox-site .testimonials-section .section-heading {
+  gap: 32px;
+  margin-bottom: 24px;
+}
+.inox-site .testimonials-section .section-heading h2 {
+  font-size: 40px;
+  line-height: 1.04;
+}
+.inox-site .testimonials-section .section-heading > p {
+  max-width: 265px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.inox-site .reviews-carousel {
+  --reviews-gap: 16px;
+  --reviews-peek: 0px;
+  min-width: 0;
+}
+.inox-site .reviews-carousel.is-single {
+  max-width: 680px;
+  margin-inline: auto;
+}
+.inox-site .reviews-rail {
+  display: flex;
+  gap: var(--reviews-gap);
+  width: 100%;
+  min-width: 0;
+  padding: 3px 2px 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 2px;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.inox-site .reviews-rail::-webkit-scrollbar {
+  display: none;
+}
+.inox-site .reviews-rail:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+.inox-site .review-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 156px;
+  flex: 0 0
+    calc(
+      (100% - (var(--reviews-visible) - 1) * var(--reviews-gap)) /
+        var(--reviews-visible) - var(--reviews-peek)
+    );
+  padding: 16px 19px 10px;
+  background: #fff;
+  border: 1px solid #d1e2ea;
+  border-radius: 10px;
+  scroll-snap-align: start;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.inox-site .review-card:hover {
+  border-color: #83bec7;
+  box-shadow: 0 4px 15px #163e4f06;
+}
+.inox-site .review-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  flex-shrink: 0;
+}
+.inox-site .review-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border: 1px solid #c5e1e4;
+  border-radius: 50%;
+  background: #e2f1f3;
+  color: #27677a;
+  font-size: 11px;
+  font-weight: 700;
+}
+.inox-site .review-author-info {
+  min-width: 0;
+}
+.inox-site .review-author-info strong {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 700;
+  color: #1d4057;
+}
+.inox-site .review-author-info small {
+  display: block;
+  margin-top: 3px;
+  font-size: 9px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #678393;
+}
+.inox-site .review-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  max-height: 42px;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  flex-shrink: 0;
+  margin: 13px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #304f64;
+}
+.inox-site .review-card-footer {
+  display: flex;
+  align-items: end;
+  min-height: 24px;
+  margin-top: auto;
+}
+.inox-site .review-read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: #007b84;
+}
+.inox-site .review-read-more:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.inox-site .reviews-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 9px 2px 0;
+}
+.inox-site .reviews-count {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.6px;
+  font-variant-numeric: tabular-nums;
+  color: #254b62;
+  white-space: nowrap;
+}
+.inox-site .reviews-count > span > span {
+  color: #7b94a4;
+  font-weight: 400;
+  margin-left: 5px;
+}
+.inox-site .reviews-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+.inox-site .reviews-dots button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 36px;
+  border-radius: 4px;
+}
+.inox-site .reviews-dots button > span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #a4bfcc;
+  transition:
+    width 0.2s,
+    background 0.2s;
+}
+.inox-site .reviews-dots button.is-active > span {
+  width: 17px;
+  border-radius: 3px;
+  background: var(--accent);
+}
+.inox-site .reviews-dots button:hover > span {
+  background: var(--accent);
+}
+.inox-site .reviews-arrows {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.inox-site .reviews-arrows button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #c3dbe5;
+  border-radius: 50%;
+  background: #f8fcfd;
+  color: #24586b;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+.inox-site .reviews-arrows button:hover:not(:disabled) {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.inox-site .reviews-arrows button:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+.inox-site .review-full-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 15px;
+  line-height: 1.9;
+  color: #36586c;
+  margin-bottom: 20px;
+}
+.inox-site .review-modal-signature {
+  display: block;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: #647f90;
+}
+.inox-site .testimonials-section .testimonial-login {
+  gap: 7px 15px;
+  margin-top: 17px;
+}
+.inox-site .testimonials-section .testimonial-login > span,
+.inox-site .testimonials-section .testimonial-login .text-link {
+  font-size: 10px;
+}
+.inox-site .testimonials-section .testimonial-login .text-link {
+  min-height: 32px;
+}
+.inox-site .testimonial-compose {
+  max-width: 660px;
+  margin: 17px auto 0;
+  border: 1px solid #d3e3eb;
+  border-radius: 8px;
+  background: #fff;
+}
+.inox-site .testimonial-compose summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 46px;
+  padding: 11px 16px;
+  list-style: none;
+  cursor: pointer;
+  color: #315c70;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 7px;
+}
+.inox-site .testimonial-compose summary::-webkit-details-marker {
+  display: none;
+}
+.inox-site .testimonial-compose summary > span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.inox-site .testimonial-compose summary > svg {
+  transition: transform 0.2s;
+  color: #4b7b8d;
+}
+.inox-site .testimonial-compose[open] summary > svg {
+  transform: rotate(180deg);
+}
+.inox-site .testimonial-compose summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.inox-site .testimonial-compose .testimonial-form {
+  margin: 0;
+  max-width: none;
+  padding: 0 16px 16px;
+}
+.inox-site .testimonial-compose .testimonial-form label {
+  font-size: 11px;
+  padding-top: 3px;
+  margin-bottom: 9px;
+}
+.inox-site .testimonial-compose .testimonial-form textarea {
+  margin-bottom: 10px;
+  min-height: 96px;
+  font-size: 13px;
+}
+.inox-site .testimonial-compose .testimonial-form .site-button {
+  min-height: 42px;
+  padding: 10px 15px;
+  font-size: 11px;
+}
+@media (max-width: 1023px) {
+  .inox-site .testimonials-section.section-space {
+    padding-block: 55px;
+  }
+  .inox-site .testimonials-section .section-heading h2 {
+    font-size: 38px;
+  }
+  .inox-site .testimonials-section .section-heading > p {
+    max-width: 220px;
+  }
+}
+@media (max-width: 767px) {
+  .inox-site .testimonials-section.section-space {
+    padding-block: 36px;
+  }
+  .inox-site .testimonials-section .section-heading {
+    gap: 12px;
+    margin-bottom: 21px;
+  }
+  .inox-site .testimonials-section .section-heading h2 {
+    font-size: 32px;
+    margin-top: 11px;
+  }
+  .inox-site .testimonials-section .section-heading > p {
+    font-size: 11px;
+    max-width: 310px;
+  }
+  .inox-site .reviews-carousel {
+    --reviews-gap: 13px;
+  }
+  .inox-site .review-card {
+    padding: 16px 17px 10px;
+  }
+  .inox-site .review-author-info strong {
+    font-size: 12px;
+  }
+  .inox-site .review-text {
+    font-size: 13px;
+  }
+  .inox-site .reviews-navigation {
+    gap: 8px;
+    padding-top: 6px;
+  }
+  .inox-site .testimonials-section .testimonial-login {
+    gap: 4px;
+    margin-top: 15px;
+    flex-direction: column;
+    align-items: start;
+  }
+  .inox-site .testimonials-section .testimonial-login .text-link {
+    min-height: 36px;
+    font-size: 11px;
+  }
+  .inox-site .testimonial-compose {
+    margin-top: 15px;
+  }
+  .inox-site .testimonial-compose .testimonial-form textarea {
+    font-size: 16px;
+  }
+}
+@media (max-width: 639px) {
+  .inox-site .reviews-carousel.can-scroll {
+    --reviews-peek: 22px;
+  }
+}
+@media (max-width: 359px) {
+  .inox-site .reviews-count {
+    font-size: 9px;
+    letter-spacing: 0.2px;
+  }
+  .inox-site .reviews-arrows {
+    gap: 6px;
+  }
+  .inox-site .reviews-arrows button {
+    width: 38px;
+    height: 38px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .inox-site .reviews-rail {
+    scroll-behavior: auto;
+  }
+  .inox-site .review-card,
+  .inox-site .reviews-dots button > span,
+  .inox-site .reviews-arrows button,
+  .inox-site .testimonial-compose summary > svg {
+    transition: none;
+  }
+}

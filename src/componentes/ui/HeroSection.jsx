@@ -1,14 +1,36 @@
 ﻿/* eslint-disable react/prop-types -- Component props follow the project's JSX convention. */
+import { useEffect, useState } from "react";
 import {
   ArrowDown,
   ArrowUpRight,
   Check,
   MoveRight,
+  Pause,
+  Play,
   Sparkles,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const specialties = [
+  "ACERO INOXIDABLE",
+  "MADERA & METAL",
+  "DISEÑO A MEDIDA",
+  "HECHO EN BOLIVIA",
+];
+
 export default function HeroSection({ openModal }) {
+  const [isStripPaused, setIsStripPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => setReducedMotion(preference.matches);
+    preference.addEventListener("change", onChange);
+    return () => preference.removeEventListener("change", onChange);
+  }, []);
+
   return (
     <>
       <section
@@ -118,16 +140,51 @@ export default function HeroSection({ openModal }) {
           </a>
         </div>
       </section>
-      <div className="craft-strip" aria-label="Nuestras especialidades">
-        <div className="site-container craft-strip-inner">
-          <span>ACERO INOXIDABLE</span>
-          <Sparkles aria-hidden="true" />
-          <span>MADERA & METAL</span>
-          <Sparkles aria-hidden="true" />
-          <span>DISEÑO A MEDIDA</span>
-          <Sparkles aria-hidden="true" />
-          <span>HECHO EN BOLIVIA</span>
+      <div
+        id="especialidades"
+        className={"craft-strip" + (isStripPaused ? " is-paused" : "")}
+      >
+        <div
+          className="craft-strip-window"
+          role="region"
+          aria-label="Nuestras especialidades"
+          tabIndex={reducedMotion ? 0 : undefined}
+        >
+          <div className="craft-strip-track">
+            {[0, 1].map((copy) => (
+              <ul
+                className="craft-strip-group"
+                key={copy}
+                aria-hidden={copy === 1 ? "true" : undefined}
+              >
+                {specialties.map((specialty) => (
+                  <li key={specialty}>
+                    <span>{specialty}</span>
+                    <Sparkles aria-hidden="true" />
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
         </div>
+        <button
+          className="craft-strip-control"
+          onClick={() => setIsStripPaused((paused) => !paused)}
+          aria-label={
+            isStripPaused
+              ? "Reanudar franja de especialidades"
+              : "Pausar franja de especialidades"
+          }
+          aria-pressed={isStripPaused}
+          title={isStripPaused ? "Reanudar movimiento" : "Pausar movimiento"}
+          disabled={reducedMotion}
+        >
+          {isStripPaused ? (
+            <Play size={15} aria-hidden="true" />
+          ) : (
+            <Pause size={15} aria-hidden="true" />
+          )}
+        </button>
       </div>
     </>
   );

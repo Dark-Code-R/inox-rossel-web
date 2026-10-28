@@ -2,9 +2,9 @@
 import {
   ArrowUpRight,
   CheckCircle2,
+  ChevronDown,
   LoaderCircle,
-  MessageSquareQuote,
-  Quote,
+  MessageSquare,
   Send,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../../../firebaseConfig";
+import TestimonialsCarousel from "./TestimonialsCarousel";
 
 export default function TestimonialsSection() {
   const [testimonios, setTestimonios] = useState([]);
@@ -105,6 +106,7 @@ export default function TestimonialsSection() {
 
   return (
     <section
+      id="comentarios"
       className="testimonials-section section-space"
       aria-labelledby="testimonials-title"
     >
@@ -118,10 +120,7 @@ export default function TestimonialsSection() {
               <span>CLIENTES TAMBIÉN.</span>
             </h2>
           </div>
-          <p>
-            Detrás de cada trabajo hay alguien que confió en nosotros. Este
-            espacio es para sus experiencias.
-          </p>
+          <p>Lo que cuentan quienes ya crearon algo con nuestro taller.</p>
         </div>
         {loading ? (
           <div className="testimonials-loading" role="status">
@@ -133,31 +132,11 @@ export default function TestimonialsSection() {
             Cargando experiencias de nuestros clientes...
           </div>
         ) : testimonios.length > 0 ? (
-          <div className="testimonials-grid">
-            {testimonios.map((testimonial) => (
-              <figure className="testimonial-card" key={testimonial.id}>
-                <Quote
-                  size={30}
-                  className="testimonial-quote"
-                  aria-hidden="true"
-                />
-                <blockquote>{testimonial.texto}</blockquote>
-                <figcaption>
-                  <span className="testimonial-avatar" aria-hidden="true">
-                    {(testimonial.nombre || "C").slice(0, 1).toUpperCase()}
-                  </span>
-                  <span>
-                    {testimonial.nombre || "Cliente de Inox Rossel"}
-                    <small>UNA EXPERIENCIA CON NUESTRO TALLER</small>
-                  </span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+          <TestimonialsCarousel testimonials={testimonios} />
         ) : (
           <div className="testimonial-empty">
             <span className="empty-quote-icon">
-              <MessageSquareQuote size={30} aria-hidden="true" />
+              <MessageSquare size={26} aria-hidden="true" />
             </span>
             <div>
               <h3>Tu experiencia también forma parte de nuestra historia.</h3>
@@ -167,47 +146,53 @@ export default function TestimonialsSection() {
                   : "¿Ya creamos algo para ti? Cuéntanos cómo fue trabajar con nuestro taller."}
               </p>
             </div>
-            <span className="empty-decoration" aria-hidden="true">
-              “
-            </span>
           </div>
         )}
         {usuarioGoogle ? (
-          <form className="testimonial-form" onSubmit={enviarTestimonio}>
-            <label htmlFor="testimonial-message">
-              Hola, {usuarioGoogle.displayName}. ¿Cómo fue tu experiencia?
-            </label>
-            <textarea
-              id="testimonial-message"
-              value={nuevoComentario}
-              onChange={(event) => setNuevoComentario(event.target.value)}
-              rows={3}
-              maxLength={2000}
-              placeholder="Comparte tu experiencia con Inox Rossel..."
-              required
-            />
-            <div aria-live="polite">
-              {feedback === "success" && (
-                <p className="form-status status-success">
-                  <CheckCircle2 size={18} aria-hidden="true" /> ¡Gracias por
-                  compartir tu experiencia!
-                </p>
-              )}
-              {feedback === "error" && (
-                <p className="form-status status-error">
-                  No pudimos publicar tu comentario. Intenta de nuevo.
-                </p>
-              )}
-            </div>
-            <button
-              className="site-button button-dark"
-              type="submit"
-              disabled={sending}
-            >
-              {sending ? "Publicando..." : "Compartir mi experiencia"}
-              <Send size={17} aria-hidden="true" />
-            </button>
-          </form>
+          <details className="testimonial-compose">
+            <summary>
+              <span>
+                <MessageSquare size={16} aria-hidden="true" /> Compartir mi
+                experiencia
+              </span>
+              <ChevronDown size={17} aria-hidden="true" />
+            </summary>
+            <form className="testimonial-form" onSubmit={enviarTestimonio}>
+              <label htmlFor="testimonial-message">
+                Hola, {usuarioGoogle.displayName}. ¿Cómo fue tu experiencia?
+              </label>
+              <textarea
+                id="testimonial-message"
+                value={nuevoComentario}
+                onChange={(event) => setNuevoComentario(event.target.value)}
+                rows={3}
+                maxLength={2000}
+                placeholder="Comparte tu experiencia con Inox Rossel..."
+                required
+              />
+              <div aria-live="polite">
+                {feedback === "success" && (
+                  <p className="form-status status-success">
+                    <CheckCircle2 size={18} aria-hidden="true" /> ¡Gracias por
+                    compartir tu experiencia!
+                  </p>
+                )}
+                {feedback === "error" && (
+                  <p className="form-status status-error">
+                    No pudimos publicar tu comentario. Intenta de nuevo.
+                  </p>
+                )}
+              </div>
+              <button
+                className="site-button button-dark"
+                type="submit"
+                disabled={sending}
+              >
+                {sending ? "Publicando..." : "Compartir mi experiencia"}
+                <Send size={17} aria-hidden="true" />
+              </button>
+            </form>
+          </details>
         ) : (
           <div className="testimonial-login">
             <span>

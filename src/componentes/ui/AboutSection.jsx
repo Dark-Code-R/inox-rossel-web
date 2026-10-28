@@ -1,5 +1,6 @@
 ﻿/* eslint-disable react/prop-types -- Component props follow the project's JSX convention. */
-import { ArrowUpRight, Check, Quote } from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
+import WeldingScene from "./WeldingScene";
 
 export default function AboutSection({ openModal }) {
   return (
@@ -10,21 +11,12 @@ export default function AboutSection({ openModal }) {
     >
       <div className="site-container about-grid">
         <div className="about-portrait">
-          <div className="portrait-frame">
-            <img
-              src="/images/mostrador-industrial.jpg"
-              alt="Mostrador de madera y estructura metálica fabricado por Inox Rossel"
-              loading="lazy"
-              width="900"
-              height="437"
-            />
-          </div>
+          <WeldingScene />
           <div className="portrait-caption">
             <span className="status-dot" />
             <span>
-              MADERA & METAL <small>EL OFICIO DETRÁS DE CADA PIEZA</small>
+              HECHO CON OFICIO <small>METAL, MADERA Y MUCHAS IDEAS</small>
             </span>
-            <Quote size={28} aria-hidden="true" />
           </div>
         </div>
         <div className="about-copy">
