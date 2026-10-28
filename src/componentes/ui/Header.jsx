@@ -1,57 +1,52 @@
-import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-import perfil from '../images/logoM.png';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../firebaseConfig';
-import anime from 'animejs';
-import useFadeInOnLoad from '../../hooks/useAnimation';
+﻿import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight, LogIn, LogOut, MapPin, Menu, X } from "lucide-react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { Link, useLocation } from "react-router-dom";
+import { auth } from "../../firebaseConfig";
+import Modal from "./Modal";
 
-function NavLink({ href, children, onClick, className }) {
-  return (
-    <a
-      href={href}
-      onClick={onClick}
-      className={`text-sm font-medium text-gray-600 hover:text-black transition-colors duration-200 ease-in-out tracking-wider ${className}`}
-    >
-      {children}
-    </a>
-  );
-}
+const links = [
+  { href: "#inicio", label: "Inicio" },
+  { href: "#servicios", label: "Servicios" },
+  { href: "/projects", label: "Proyectos" },
+  { href: "#nosotros", label: "Nosotros" },
+];
 
 export default function Header() {
+  const { pathname } = useLocation();
+  const isHome = pathname === "/" || pathname === "/home";
+  const sectionHref = (hash) => (isHome ? hash : "/" + hash);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [user, setUser] = useState(null);
+  const menuButton = useRef(null);
 
-  useFadeInOnLoad('.header-animate');
+  useEffect(() => onAuthStateChanged(auth, setUser), []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => {
-      const next = !prev;
-      if (next) {
-        setTimeout(() => {
-          anime({
-            targets: '.mobile-menu-slide',
-            translateX: [300, 0],
-            opacity: [0, 1],
-            duration: 400,
-            easing: 'easeOutExpo',
-          });
-        }, 10);
+  useEffect(() => {
+    const closeMenu = (event) => {
+      if (event.key === "Escape" && isMenuOpen) {
+        setIsMenuOpen(false);
+        menuButton.current?.focus();
       }
-      return next;
-    });
-  };
+    };
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const onResize = () => {
+      if (desktop.matches) setIsMenuOpen(false);
+    };
+    window.addEventListener("keydown", closeMenu);
+    desktop.addEventListener("change", onResize);
+    return () => {
+      window.removeEventListener("keydown", closeMenu);
+      desktop.removeEventListener("change", onResize);
+    };
+  }, [isMenuOpen]);
 
-  const toggleImageModal = (e) => {
-    e.preventDefault();
-    setShowImageModal(!showImageModal);
-  };
-
-  const handleLogout = async (e) => {
-    e.preventDefault();
+  const handleLogout = async () => {
     try {
       await signOut(auth);
-      window.location.href = '/';
+      setIsMenuOpen(false);
+      window.location.href = "/";
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
@@ -59,104 +54,129 @@ export default function Header() {
 
   return (
     <>
-      <header className="header-animate sticky top-0 z-50 w-full border-b border-gray-300 bg-white shadow-md">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-          {/* Logo */}
-          <div className="flex items-center space-x-2 md:space-x-4 text-black font-semibold">
-            <a href="#" onClick={toggleImageModal} className="cursor-pointer">
-              <img
-                src={perfil}
-                alt="Logo"
-                className="h-8 w-8 md:h-10 md:w-10 rounded-full object-cover border-2 border-gray-300"
-              />
-            </a>
-            <span className="font-bold text-lg md:text-xl tracking-wider">
-              Inox Rossel
-            </span>
-          </div>
-
-          <button
-            onClick={toggleMenu}
-            className="md:hidden text-gray-600 focus:outline-none"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-
-          <nav className="hidden md:flex gap-4 md:gap-8 items-center">
-            <NavLink href="#servicios">Servicios</NavLink>
-            <NavLink href="#portafolio">Portafolio</NavLink>
-            <NavLink href="#contacto">Contacto</NavLink>
-            <NavLink
-              href="/"
-              onClick={handleLogout}
-              className="text-red-600 font-bold"
-            >
-              Salir
-            </NavLink>
-          </nav>
-        </div>
-      </header>
-
-      {/* Menú móvil */}
-      <div
-        className={`fixed inset-0 z-40 flex justify-end bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out md:hidden ${
-          isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={toggleMenu}
-      >
-        <div
-          className={`mobile-menu-slide absolute right-0 top-0 min-h-screen w-3/4 bg-white shadow-lg pt-16 px-6 pb-6 overflow-y-auto ${
-            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <nav className="mt-8 flex flex-col gap-6">
-            <NavLink href="#servicios" onClick={toggleMenu}>
-              Servicios
-            </NavLink>
-            <NavLink href="#portafolio" onClick={toggleMenu}>
-              Portafolio
-            </NavLink>
-            <NavLink href="#contacto" onClick={toggleMenu}>
-              Contacto
-            </NavLink>
-            <NavLink
-              href="/"
-              onClick={(e) => {
-                toggleMenu();
-                handleLogout(e);
-              }}
-              className="text-red-600 font-bold"
-            >
-              Salir
-            </NavLink>
-          </nav>
+      <div className="location-bar">
+        <div className="site-container location-bar-inner">
+          <span>
+            <MapPin size={12} aria-hidden="true" /> Hecho en Oruro, Bolivia
+          </span>
+          <span>Metal, madera y pasión por el detalle.</span>
         </div>
       </div>
-
-      {/* Modal Imagen */}
-      {showImageModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
-          onClick={toggleImageModal}
-        >
-          <div
-            className="relative max-w-3xl max-h-[90vh] overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
+      <header className="site-header">
+        <div className="site-container header-inner">
+          <button
+            className="brand"
+            onClick={() => setShowImageModal(true)}
+            aria-label="Ver logotipo de Inox Rossel"
           >
-            <button
-              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg"
-              onClick={toggleImageModal}
+            <span className="brand-mark" aria-hidden="true">
+              <i />
+              <i />
+            </span>
+            <span className="brand-type">
+              INOX{" "}
+              <strong>
+                ROSSEL<span>.</span>
+              </strong>
+              <small>METAL & MADERA</small>
+            </span>
+          </button>
+          <nav className="desktop-nav" aria-label="Navegación principal">
+            {links.map(({ href, label }) => (
+              <a
+                key={href}
+                href={href.startsWith("#") ? sectionHref(href) : href}
+                aria-current={href === pathname ? "page" : undefined}
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+          <div className="header-actions">
+            <a
+              className="site-button button-primary header-quote"
+              href={sectionHref("#contacto")}
             >
-              <X size={24} className="text-gray-800" />
+              Cotiza tu proyecto <ArrowUpRight size={17} aria-hidden="true" />
+            </a>
+            {user && (
+              <button
+                className="header-account"
+                onClick={handleLogout}
+                aria-label="Cerrar sesión"
+                title="Cerrar sesión"
+              >
+                <LogOut size={19} />
+              </button>
+            )}
+            <button
+              ref={menuButton}
+              className="menu-toggle"
+              aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={isMenuOpen}
+              aria-controls={isMenuOpen ? "mobile-navigation" : undefined}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            <img
-              src={perfil}
-              alt="Logo Inox Rossel"
-              className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
-            />
           </div>
         </div>
+        {isMenuOpen && (
+          <nav
+            id="mobile-navigation"
+            className="mobile-nav"
+            aria-label="Navegación móvil"
+          >
+            <div className="site-container">
+              {links.map(({ href, label }, index) => (
+                <a
+                  key={href}
+                  href={href.startsWith("#") ? sectionHref(href) : href}
+                  aria-current={href === pathname ? "page" : undefined}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className="nav-number">0{index + 1}</span>
+                  {label}
+                  <ArrowUpRight size={18} aria-hidden="true" />
+                </a>
+              ))}
+              <a
+                className="mobile-contact-link"
+                href={sectionHref("#contacto")}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Hablemos de tu proyecto{" "}
+                <ArrowUpRight size={18} aria-hidden="true" />
+              </a>
+              {user ? (
+                <button className="nav-account" onClick={handleLogout}>
+                  <LogOut size={16} aria-hidden="true" /> Cerrar sesión
+                </button>
+              ) : (
+                <Link className="nav-account" to="/login">
+                  <LogIn size={16} aria-hidden="true" /> Acceder a mi cuenta
+                </Link>
+              )}
+            </div>
+          </nav>
+        )}
+      </header>
+      {isMenuOpen && (
+        <button
+          className="menu-backdrop"
+          aria-label="Cerrar menú"
+          tabIndex={-1}
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
+      {showImageModal && (
+        <Modal title="Inox Rossel" onClose={() => setShowImageModal(false)}>
+          <img
+            className="brand-preview"
+            src="/images/inox-rossel-logo.webp"
+            alt="Logotipo de Inox Rossel"
+          />
+        </Modal>
       )}
     </>
   );

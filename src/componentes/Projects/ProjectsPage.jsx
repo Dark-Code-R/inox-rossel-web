@@ -1,428 +1,305 @@
-import React, { useState, useEffect } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import perfil from '../images/logoM.png';
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUpRight,
+  Check,
+  Search,
+  SearchX,
+  X,
+} from "lucide-react";
+import Header from "../ui/Header";
+import Footer from "../ui/Footer";
+import Modal from "../ui/Modal";
+import ProjectCard from "./ProjectCard";
+import ProjectImage from "./ProjectImage";
+import CategoryFilter from "./CategoryFilter";
+import { projects } from "./data/projects";
+import { categories } from "./data/categories";
+import "../landing.css";
+import "./projects.css";
 
-// Mover los proyectos a un archivo separado sería ideal para mejor organización
-const projects = [
-  {
-    title: "Horno Industrial de Alta Producción",
-    description: "Cocción uniforme para grandes cantidades.",
-    fullDescription:
-      "Equipo profesional diseñado especialmente para panaderías y restaurantes que requieren cocciones rápidas, uniformes y consistentes en grandes volúmenes.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745349630/horno_industria_lit7u5.jpg",
-    category: "equipos-cocina"
-  },
-  {
-    title: "Carritos Rostizadores Profesionales",
-    description: "Asado eficiente para pollos y carnes.",
-    fullDescription:
-      "Carritos móviles con asadores giratorios ideales para preparar pollos y carnes de forma uniforme y eficiente, perfectos para negocios gastronómicos móviles y restaurantes.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745349632/spiaderas_ijqans.jpg",
-    category: "equipos-cocina"
-  },
-  {
-    title: "Cocina Combinada Profesional",
-    description: "Quemadores y parrilla integrados.",
-    fullDescription:
-      "Equipo versátil para cocinar diversos platos simultáneamente, perfecto para establecimientos que ofrecen una variedad gastronómica.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745349633/cocina_industrial_combinada_x9bbpc.jpg",
-    category: "equipos-cocina"
-  },
-  {
-    title: "Cocina Industrial de Alto Rendimiento",
-    description: "Alta potencia con múltiples quemadores.",
-    fullDescription:
-      "Diseñada especialmente para restaurantes y negocios gastronómicos que necesitan eficiencia y rapidez al cocinar grandes cantidades.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745349631/Cocina_industrial_a0l96f.jpg",
-    category: "equipos-cocina"
-  },
-  {
-    title: "Bandejas Transportadoras Profesionales",
-    description: "Facilita la manipulación de alimentos.",
-    fullDescription:
-      "Bandejas metálicas resistentes y prácticas, perfectas para transportar y almacenar productos horneados o alimentos preparados.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745349697/Transportador_qxalnv.jpg",
-    category: "accesorios"
-  },
-  {
-    title: "Freidoras Broaster Multicapacidad",
-    description: "Cocción rápida y crujiente bajo presión.",
-    fullDescription:
-      "Equipos especializados para preparar pollo estilo broaster con diferentes capacidades, garantizando textura y sabor excepcionales.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745349631/Brosteras_capacidades_c4t0fm.jpg",
-    category: "equipos-cocina"
-  },
-  {
-    title: "Carrito Rostizador de Pollos",
-    description: "Asado uniforme y práctico transporte.",
-    fullDescription:
-      "Carrito móvil equipado con asadores giratorios ideales para preparar pollo a la brasa uniformemente, óptimo para negocios ambulantes.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745349634/carrito_asador_de_pollos_m6wr5t.jpg",
-    category: "equipos-cocina"
-  },
-  {
-    title: "Horno Especializado para Pizza",
-    description: "Base crujiente y rápida preparación.",
-    fullDescription:
-      "Horno diseñado específicamente para pizzerías, ofreciendo altas temperaturas para lograr pizzas perfectas en poco tiempo.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745349630/Horno_para_pizza_ojlpwz.jpg",
-    category: "equipos-cocina"
-  },
-  {
-    title: "Parrilla Profesional en Acero Inoxidable",
-    description: "Ideal para eventos y restaurantes.",
-    fullDescription:
-      "Parrillero robusto fabricado en acero inoxidable, resistente, higiénico y fácil de limpiar, perfecto para cualquier tipo de evento gastronómico.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745349631/Parrillero_en_acero_inoxidable_tv0lwz.jpg",
-    category: "equipos-cocina"
-  },
-  {
-    title: "Horno Artesanal para Pizza en Acero Inoxidable",
-    description:
-      "Cocción perfecta para pizzas artesanales con estilo y eficiencia.",
-    fullDescription:
-      "Este horno artesanal especializado en pizzas combina diseño moderno y funcionalidad excepcional. Fabricado en acero inoxidable, garantiza una distribución uniforme del calor para lograr una cocción rápida, base crujiente y sabores auténticos. Ideal para espacios exteriores, terrazas o negocios gastronómicos que buscan destacar ofreciendo pizzas con calidad profesional y un toque artesanal único.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745350515/Horno_a_gas_piza_znbtrz.webp",
-    category: "equipos-cocina"
-  },
-  {
-    title: "Escritorio Minimalista de Madera y Metal",
-    description: "Práctico, elegante y perfecto para espacios reducidos.",
-    fullDescription:
-      "Este escritorio combina la calidez de la madera natural con la resistencia de una estructura metálica, ofreciendo un diseño moderno y funcional. Ideal para oficinas en casa, estudios o espacios pequeños donde se necesita optimizar el área sin sacrificar estilo.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745351091/mesa_fz3pfx.png",
-    category: "mobiliario"
-  },
-  {
-    title: "Ropero Industrial de Madera y Metal",
-    description: "Amplio, resistente y de diseño moderno.",
-    fullDescription:
-      "Este ropero combina la robustez de una estructura metálica con la elegancia de la madera natural. Ofrece gran capacidad de almacenamiento con compartimentos y cajones bien distribuidos, ideal para hogares, lofts o espacios que buscan un estilo industrial contemporáneo.",
-    imageUrl:
-      "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1747849290/Ropero_Industrial_de_Madera_y_Metal_nmagwb.jpg",
-    category: "mobiliario"
-  },
-  {
-  title: "Escritorio Industrial con Cajonera",
-  description: "Diseño robusto en metal y madera natural.",
-  fullDescription:
-    "Este escritorio industrial combina estructura metálica pintada en negro con superficies de madera clara, ofreciendo resistencia, funcionalidad y estilo. Incluye tres cajones con tiradores metálicos, ideales para organizar herramientas, documentos o accesorios de oficina. Su diseño artesanal lo hace perfecto para talleres, estudios o ambientes modernos con estética industrial.",
-  imageUrl:
-    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237776/Escritorio_Industrial_jsyafv.jpg", // reemplaza con tu URL final
-  category: "mobiliario"
-},
-{
-  title: "Mostrador de Trabajo Estilo Industrial",
-  description: "Amplia superficie con estanterías integradas.",
-  fullDescription:
-    "Mostrador de trabajo fabricado en estructura metálica negra con detalles en madera laminada. Ofrece gran durabilidad y espacio funcional gracias a sus múltiples repisas abiertas y laterales cerrados. Ideal para negocios, tiendas o talleres que buscan un mobiliario resistente con una presentación moderna y profesional.",
-  imageUrl:
-    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237777/Mostrador_de_Trabajo_zbo4ek.jpg",
-  category: "mobiliario"
-},
-{
-  title: "Estantería Metálica de Exhibición",
-  description: "Estructura modular para exhibir productos o decoración.",
-  fullDescription:
-    "Estantería industrial de gran capacidad, elaborada con marco metálico y paneles de madera. Su diseño abierto facilita la organización y exposición de productos, herramientas o elementos decorativos. Es una solución versátil tanto para hogares modernos como para espacios comerciales.",
-  imageUrl:
-    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237776/Estanter%C3%ADa_Met%C3%A1lica_jmugla.jpg",
-  category: "mobiliario"
-},
-{
-  title: "Rack Industrial Modular",
-  description: "Estructura vertical para almacenamiento pesado.",
-  fullDescription:
-    "Rack industrial de diseño modular, fabricado con tubos metálicos reforzados y repisas de madera. Ofrece gran estabilidad y estética contemporánea, combinando fuerza y elegancia. Ideal para almacenes, talleres o zonas de trabajo donde se requiere orden y durabilidad.",
-  imageUrl:
-    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237776/Rack_Industrial_ir2yed.jpg",
-  category: "mobiliario"
-},
-{
-  title: "Centro de Almacenamiento Multifuncional",
-  description: "Diseño híbrido con módulos y compartimientos.",
-  fullDescription:
-    "Mueble de diseño industrial con múltiples cajones, repisas y compartimientos funcionales. Su estructura en acero negro contrasta con la madera natural, ofreciendo una estética moderna y práctica. Perfecto para organizar herramientas, utensilios o artículos de oficina con un estilo distintivo.",
-  imageUrl:
-    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237777/Centro_de_Almacenamiento_k0cl6v.jpg",
-  category: "mobiliario"
-},
-{
-  title: "Horno Doméstico en Acero Inoxidable Pulido",
-  description: "Diseño compacto, elegante y totalmente inoxidable.",
-  fullDescription:
-    "Horno doméstico de acero inoxidable de alta resistencia, fabricado con acabados pulidos que reflejan una estética profesional. Incluye termómetro integrado y cámara de cocción con aislamiento térmico. Ideal para hogares, panaderías o negocios gastronómicos que buscan calidad, higiene y durabilidad en cada preparación.",
-  imageUrl:
-    "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1762237778/Horno_Dom%C3%A9stico_jzyvut.jpg",
-  category: "equipos-cocina"
-},
-
-];
-
-// Categorías disponibles
-const categories = [
-  { id: "todos", name: "Todos los Proyectos" },
-  { id: "equipos-cocina", name: "Equipos de Cocina" },
-  { id: "mobiliario", name: "Mobiliario" },
-  { id: "accesorios", name: "Accesorios" }
-];
+const normalize = (value) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+const counts = Object.fromEntries(
+  categories.map((category) => [
+    category.id,
+    category.id === "todos"
+      ? projects.length
+      : projects.filter((project) => project.category === category.id).length,
+  ]),
+);
 
 export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState("todos");
-  const [filteredProjects, setFilteredProjects] = useState(projects);
-
-  // Filtrar proyectos cuando cambia la categoría seleccionada
-  useEffect(() => {
-    if (selectedCategory === "todos") {
-      setFilteredProjects(projects);
-    } else {
-      setFilteredProjects(projects.filter(project => project.category === selectedCategory));
-    }
-  }, [selectedCategory]);
-
-  return (
-    <div className="flex flex-col min-h-screen bg-gray-100 text-black">
-      <header className="sticky top-0 z-50 w-full border-b border-gray-300 bg-white shadow-md animate-fade-in">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <img
-              src={perfil}
-              alt="Logo Inox Rossel"
-              className="h-10 w-10 rounded-full border-2 border-gray-300 object-cover"
-            />
-            <h1 className="text-2xl font-bold">Proyectos Realizados</h1>
-          </div>
-          <Link to="/home">
-            <button className="bg-gray-200 text-black px-4 py-2 rounded-md hover:bg-gray-300 flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-1"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Volver al Inicio
-            </button>
-          </Link>
-        </div>
-      </header>
-
-      <main className="flex-1 container mx-auto px-6 py-8">
-        <section className="text-center my-8 px-6">
-          <h2 className="text-3xl font-bold mb-4">Nuestros Proyectos</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Cada proyecto es un reflejo de nuestra pasión por la artesanía y el
-            diseño personalizado. Desde estructuras metálicas hasta mobiliario
-            en madera, nuestros proyectos están hechos a la medida para cumplir
-            con los más altos estándares de calidad.
-          </p>
-        </section>
-
-        {/* Filtro de categorías */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-full transition-all ${
-                selectedCategory === category.id
-                  ? "bg-black text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Galería de Proyectos */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.length > 0 ? (
-            filteredProjects.map((project, index) => (
-              <ProjectCard
-                key={index}
-                title={project.title}
-                description={project.description}
-                imageUrl={project.imageUrl}
-                fullDescription={project.fullDescription}
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12">
-              <p className="text-gray-500 text-lg">
-                No hay proyectos disponibles en esta categoría.
-              </p>
-            </div>
-          )}
-        </section>
-
-        {/* Navegación rápida */}
-        <div className="flex justify-center mt-12">
-          <Link
-            to="/home#contacto"
-            className="inline-flex items-center bg-black text-white px-5 py-3 rounded-full shadow-lg hover:bg-gray-800 transition duration-300 font-medium"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-            </svg>
-            Contactar ahora
-          </Link>
-        </div>
-      </main>
-
-      <footer className="w-full py-8 bg-gray-200 text-center text-gray-600 mt-12">
-        <p>
-          Gracias por explorar nuestros proyectos realizados. Si deseas conocer
-          más o iniciar tu propio proyecto, no dudes en contactarnos.
-        </p>
-      </footer>
-    </div>
+  const [search, setSearch] = useState("");
+  const [selectedProject, setSelectedProject] = useState(null);
+  const filteredProjects = projects.filter(
+    (project) =>
+      (selectedCategory === "todos" || project.category === selectedCategory) &&
+      normalize(project.title + " " + project.description).includes(
+        normalize(search.trim()),
+      ),
   );
-}
+  const categoryName = (category) =>
+    categories.find((item) => item.id === category)?.name || category;
 
-function ProjectCard({ title, description, imageUrl, fullDescription }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
-
-  return (
-    <>
-      <div
-        className="group bg-white rounded-lg shadow-lg overflow-hidden border border-gray-300 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl cursor-pointer"
-        onClick={() => setIsModalOpen(true)}
-      >
-        {imageError ? (
-          <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-500">Imagen no disponible</span>
-          </div>
-        ) : (
-          <div className="relative w-full h-48">
-            {!imageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
-              </div>
-            )}
-            <img
-              src={imageUrl}
-              alt={title}
-              className={`w-full h-48 object-cover transition-transform duration-300 hover:scale-105 hover:opacity-90 ${
-                imageLoaded ? "opacity-100" : "opacity-0"
-              }`}
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageError(true)}
-            />
-          </div>
-        )}
-        <div className="p-6">
-          <h3 className="text-xl font-bold mb-2">{title}</h3>
-          <p className="text-gray-600">{description}</p>
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <Modal
-          onClose={() => setIsModalOpen(false)}
-          title={title}
-          description={fullDescription}
-          imageUrl={imageUrl}
-        />
-      )}
-    </>
-  );
-}
-
-function Modal({ onClose, title, description, imageUrl }) {
-  // Cerrar modal al hacer clic fuera
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  // Cerrar modal con tecla Escape
   useEffect(() => {
-    const handleEscKey = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    
-    window.addEventListener('keydown', handleEscKey);
-    return () => window.removeEventListener('keydown', handleEscKey);
-  }, [onClose]);
-
-  // Prevenir scroll del body cuando el modal está abierto
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    const previousTitle = document.title;
+    document.title = "Proyectos realizados | Inox Rossel";
+    window.scrollTo(0, 0);
     return () => {
-      document.body.style.overflow = 'auto';
+      document.title = previousTitle;
     };
   }, []);
 
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
+  const resetFilters = () => {
+    setSelectedCategory("todos");
+    setSearch("");
+  };
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      onClick={handleBackdropClick}
-    >
-      <div className="bg-white rounded-lg p-6 max-w-lg mx-auto shadow-lg relative animate-fade-in-up overflow-auto max-h-[90vh]">
-        <button
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold"
-          onClick={onClose}
-        >
-          &times;
-        </button>
-        
-        {imageError ? (
-          <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-md mb-4">
-            <span className="text-gray-500">Imagen no disponible</span>
+    <div className="inox-site projects-page">
+      <a className="skip-link" href="#catalogo">
+        Saltar a los proyectos
+      </a>
+      <Header />
+      <main>
+        <section className="catalog-hero" aria-labelledby="projects-title">
+          <div className="site-container">
+            <Link to="/" className="catalog-back">
+              <ArrowLeft size={16} aria-hidden="true" /> Volver al inicio
+            </Link>
+            <div className="catalog-hero-grid">
+              <div className="catalog-hero-copy">
+                <span className="eyebrow">
+                  <span className="status-dot" /> PORTAFOLIO / INOX ROSSEL
+                </span>
+                <h1 id="projects-title">
+                  IDEAS HECHAS.
+                  <br />
+                  <span>PROYECTOS REALES.</span>
+                </h1>
+                <p>
+                  Del primer trazo al último acabado. Explora las piezas que
+                  hemos creado para hogares, negocios y nuevas formas de
+                  emprender.
+                </p>
+                <a href="#catalogo" className="catalog-explore">
+                  Encuentra tu próxima inspiración{" "}
+                  <ArrowDown size={17} aria-hidden="true" />
+                </a>
+              </div>
+              <div className="catalog-hero-art">
+                <img
+                  className="catalog-hero-photo"
+                  src="/images/mostrador-industrial.jpg"
+                  alt="Mostrador de metal y madera fabricado por Inox Rossel"
+                  width="900"
+                  height="437"
+                  loading="eager"
+                />
+                <span className="catalog-photo-label">
+                  <span className="status-dot" /> HECHO A MEDIDA, HECHO PARA
+                  DURAR
+                </span>
+                <span className="catalog-photo-corner" aria-hidden="true">
+                  <ArrowUpRight size={35} />
+                </span>
+                <div className="catalog-material-tag">
+                  <span>01 / MADERA & METAL</span>
+                  <strong>
+                    El oficio está
+                    <br />
+                    en los detalles.
+                  </strong>
+                </div>
+              </div>
+            </div>
+            <div className="catalog-hero-bottom">
+              <div className="catalog-metrics">
+                <span>
+                  <strong>
+                    {projects.length}
+                    <i> /</i>
+                  </strong>{" "}
+                  PROYECTOS PARA EXPLORAR
+                </span>
+                <span>
+                  <strong>
+                    20<i>+</i>
+                  </strong>{" "}
+                  AÑOS DE EXPERIENCIA
+                </span>
+              </div>
+              <span className="catalog-handmade">
+                <Check size={16} aria-hidden="true" /> Diseño propio.
+                Fabricación a medida.
+              </span>
+            </div>
           </div>
-        ) : (
-          <div className="relative w-full max-h-64 mb-4">
-            {!imageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
+        </section>
+        <section
+          id="catalogo"
+          className="catalog-section section-space"
+          aria-labelledby="catalog-title"
+        >
+          <div className="site-container">
+            <div className="catalog-section-heading">
+              <div>
+                <span className="eyebrow">DEL TALLER A TU ESPACIO</span>
+                <h2 id="catalog-title">
+                  PROYECTOS REALIZADOS<span>.</span>
+                </h2>
+              </div>
+              <p>
+                Materiales con fuerza.
+                <br />
+                Soluciones con personalidad.
+              </p>
+            </div>
+            <div className="catalog-toolbar">
+              <CategoryFilter
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onSelectCategory={setSelectedCategory}
+                counts={counts}
+              />
+              <div className="catalog-search">
+                <Search size={17} aria-hidden="true" />
+                <label className="sr-only" htmlFor="project-search">
+                  Buscar proyectos
+                </label>
+                <input
+                  id="project-search"
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Busca tu inspiración..."
+                />
+                {search && (
+                  <button
+                    onClick={() => setSearch("")}
+                    aria-label="Limpiar búsqueda"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+            </div>
+            <div
+              className="catalog-results"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <span>
+                {filteredProjects.length}{" "}
+                {filteredProjects.length === 1 ? "proyecto" : "proyectos"}{" "}
+                {selectedCategory === "todos"
+                  ? "para descubrir"
+                  : "en " + categoryName(selectedCategory).toLowerCase()}
+              </span>
+              <span>
+                CREADOS EN ORURO, BOLIVIA <span className="status-dot" />
+              </span>
+            </div>
+            <div className="catalog-grid">
+              {filteredProjects.map((project) => (
+                <ProjectCard
+                  key={project.title}
+                  project={project}
+                  index={projects.indexOf(project)}
+                  categoryName={categoryName(project.category)}
+                  onOpen={() => setSelectedProject(project)}
+                />
+              ))}
+            </div>
+            {filteredProjects.length === 0 && (
+              <div className="catalog-empty">
+                <SearchX size={40} strokeWidth={1.3} aria-hidden="true" />
+                <h3>Todavía no hay una pieza con ese nombre.</h3>
+                <p>
+                  Prueba otra búsqueda o explora todos los proyectos. Quizá lo
+                  que imaginas sea lo próximo que creemos.
+                </p>
+                <button
+                  className="site-button button-dark"
+                  onClick={resetFilters}
+                >
+                  Ver todos los proyectos{" "}
+                  <ArrowUpRight size={18} aria-hidden="true" />
+                </button>
               </div>
             )}
-            <img
-              src={imageUrl}
-              alt={title}
-              className={`w-full h-auto max-h-64 object-contain rounded-md ${
-                imageLoaded ? "opacity-100" : "opacity-0"
-              }`}
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageError(true)}
-            />
+            <div className="catalog-endnote">
+              <span className="status-dot" />
+              <p>
+                Estas piezas ya tienen una historia. La tuya puede ser la
+                siguiente.
+              </p>
+            </div>
           </div>
-        )}
-        
-        <h3 className="text-2xl font-bold text-center mb-4">{title}</h3>
-        <p className="text-gray-700 text-center">{description}</p>
-      </div>
+        </section>
+        <section className="catalog-cta" aria-labelledby="catalog-cta-title">
+          <div className="site-container catalog-cta-inner">
+            <div>
+              <span className="eyebrow">
+                TU IDEA TIENE LUGAR EN NUESTRO TALLER
+              </span>
+              <h2 id="catalog-cta-title">
+                ¿HACEMOS REALIDAD
+                <br />
+                <span>TU PRÓXIMO PROYECTO?</span>
+              </h2>
+            </div>
+            <div>
+              <p>
+                Cuéntanos qué tienes en mente.
+                <br />
+                Nosotros te ayudamos a darle forma.
+              </p>
+              <Link className="site-button button-primary" to="/#contacto">
+                Hablemos de tu idea{" "}
+                <ArrowUpRight size={19} aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+      {selectedProject && (
+        <Modal
+          title={selectedProject.title}
+          onClose={() => setSelectedProject(null)}
+        >
+          <ProjectImage
+            key={selectedProject.imageUrl}
+            src={selectedProject.imageUrl}
+            alt={selectedProject.title}
+            eager
+            className="catalog-modal-image"
+          />
+          <div className="catalog-modal-meta">
+            <span>{categoryName(selectedProject.category)}</span>
+            <span>
+              <Check size={13} aria-hidden="true" /> Fabricación a medida
+            </span>
+          </div>
+          <p className="modal-description">{selectedProject.fullDescription}</p>
+          <Link
+            className="site-button button-primary"
+            to="/#contacto"
+            onClick={() => setSelectedProject(null)}
+          >
+            Quiero un proyecto así <ArrowUpRight size={18} aria-hidden="true" />
+          </Link>
+        </Modal>
+      )}
     </div>
   );
 }

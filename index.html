@@ -1,28 +1,70 @@
-<!doctype html>
-<html lang="es">
+﻿<!doctype html>
+<html lang="es" class="is-site-loading">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Título de la página -->
+    <meta name="theme-color" content="#0b2336" />
+    <link rel="stylesheet" href="/loader.css" />
     <title>Inox Rossel | Metal y Madera Profesional</title>
-
-    <!-- Descripción para SEO -->
-    <meta name="description" content="Proyectos profesionales en metal y madera, fabricados en Bolivia. Equipos industriales, mobiliario personalizado y estructuras a medida." />
-
-    <!-- Icono personalizado redondo -->
-    <link rel="icon" type="image/png" href="./src/componentes/images/LogoFinal.png" sizes="32x32" />
-    <!-- Versiones adicionales para diferentes dispositivos -->
-    <link rel="apple-touch-icon" href="./src/componentes/images/LogoF-round.png" />
-
-    <!-- Palabras clave opcionales -->
-    <meta name="keywords" content="inox, metalmecánica, carpintería, bolivia, muebles personalizados, estructuras metálicas, cocina industrial" />
-
-    <!-- Autor -->
+    <meta
+      name="description"
+      content="Proyectos profesionales en metal y madera, fabricados en Oruro, Bolivia. Equipos industriales, mobiliario personalizado y estructuras a medida."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <link
+      rel="preload"
+      href="/fonts/barlow-condensed-700-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/dm-sans-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <meta
+      name="keywords"
+      content="inox, metalmecánica, carpintería, Bolivia, Oruro, muebles personalizados, estructuras metálicas, cocina industrial"
+    />
     <meta name="author" content="Rodolfo Rossel" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="site-loader" role="status" aria-label="Cargando Inox Rossel">
+      <div class="loader-symbol" aria-hidden="true"><i></i><i></i></div>
+      <div class="loader-name" aria-hidden="true">
+        INOX <strong>ROSSEL<em>.</em></strong
+        ><small>METAL &amp; MADERA</small>
+      </div>
+      <div class="loader-progress" aria-hidden="true"><span></span></div>
+      <p class="loader-message">PREPARANDO ALGO BIEN HECHO</p>
+      <span class="loader-signature" aria-hidden="true"
+        >ORURO, BOLIVIA / DISEÑO A MEDIDA</span
+      >
+    </div>
+    <div id="root" inert aria-busy="true"></div>
+    <script>
+      // Keep the site accessible even if the application fails during startup.
+      window.setTimeout(() => {
+        document.getElementById("site-loader")?.remove();
+        document.getElementById("root")?.removeAttribute("inert");
+        document.getElementById("root")?.removeAttribute("aria-busy");
+        document.documentElement.classList.remove("is-site-loading");
+      }, 8000);
+    </script>
+    <noscript
+      ><style>
+        #site-loader {
+          display: none;
+        }
+      </style>
+      <p>
+        Activa JavaScript para explorar los proyectos de Inox Rossel.
+      </p></noscript
+    >
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

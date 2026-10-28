@@ -1,19 +1,28 @@
-import React from "react";
-
-export default function CategoryFilter({ categories, selectedCategory, onSelectCategory }) {
+﻿/* eslint-disable react/prop-types -- Component props follow the project's JSX convention. */
+export default function CategoryFilter({
+  categories,
+  selectedCategory,
+  onSelectCategory,
+  counts = {},
+}) {
   return (
-    <div className="flex flex-wrap justify-center gap-2 mb-8">
-      {categories.map(category => (
+    <div
+      className="catalog-categories"
+      role="group"
+      aria-label="Filtrar proyectos por categoría"
+    >
+      {categories.map((category) => (
         <button
           key={category.id}
+          type="button"
+          aria-pressed={selectedCategory === category.id}
+          className={selectedCategory === category.id ? "is-selected" : ""}
           onClick={() => onSelectCategory(category.id)}
-          className={`px-4 py-2 rounded-full transition-all ${
-            selectedCategory === category.id
-              ? "bg-black text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-          }`}
         >
-          {category.name}
+          {category.id === "todos" ? "Todos los proyectos" : category.name}
+          {counts[category.id] !== undefined && (
+            <span>{String(counts[category.id]).padStart(2, "0")}</span>
+          )}
         </button>
       ))}
     </div>

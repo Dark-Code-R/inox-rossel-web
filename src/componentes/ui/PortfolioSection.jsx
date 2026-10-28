@@ -1,130 +1,160 @@
-import React, { useState } from 'react';
-import { Button } from './componentes-ui/Button';
-import useStaggeredFadeIn from '../../hooks/useAnimation';
+﻿import { useState } from "react";
+import { ArrowUpRight, MoveRight, Play } from "lucide-react";
+import { Link } from "react-router-dom";
+import Modal from "./Modal";
 
-function ProjectCard({ title, description, image, onOpen }) {
-  const isVideo = image.endsWith('.mp4');
-
-  return (
-    <div
-      className="project-card relative overflow-hidden rounded-lg bg-white h-64 shadow-md group border border-gray-200 transform transition-transform duration-300 hover:scale-105 opacity-0"
-      onClick={onOpen}
-    >
-      {isVideo ? (
-        <video
-          src={image}
-          className="object-cover w-full h-full rounded-lg"
-          muted
-          autoPlay
-          loop
-          playsInline
-        />
-      ) : (
-        <img
-          src={image}
-          alt={title}
-          className="object-cover w-full h-full opacity-90 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"
-        />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg">
-        <div className="text-left">
-          <h3 className="text-lg font-semibold text-white mb-1">{title}</h3>
-          <p className="text-sm text-gray-300">{description.slice(0, 60)}...</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ProjectModal({ project, onClose }) {
-  const isVideo = project.image.endsWith('.mp4');
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div
-        className="bg-white rounded-lg p-6 max-w-lg md:max-w-2xl mx-auto shadow-lg relative overflow-auto"
-        style={{ maxHeight: '90vh' }}
-      >
-        <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-800" onClick={onClose}>
-          &times;
-        </button>
-
-        {isVideo ? (
-          <video
-            src={project.image}
-            className="w-full h-auto max-h-64 object-contain rounded-md mb-4"
-            controls
-          />
-        ) : (
-          <img
-            src={project.image}
-            alt={project.title}
-            className="w-full h-auto max-h-64 object-contain rounded-md mb-4"
-          />
-        )}
-
-        <h3 className="text-2xl font-semibold text-center mb-2">{project.title}</h3>
-        <p className="text-gray-600 text-center mb-4">{project.description}</p>
-        <div className="text-center mt-6">
-          <Button onClick={onClose} className="bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-gray-900">
-            Cerrar
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
+const projects = [
+  {
+    title: "Cocina industrial a gas",
+    category: "EQUIPAMIENTO GASTRONÓMICO",
+    description:
+      "Cocina de seis quemadores en acero inoxidable, pensada para el trabajo diario de restaurantes y emprendimientos gastronómicos.",
+    image: "/images/cocina-industrial.jpg",
+  },
+  {
+    title: "Mueble Switch Mario",
+    category: "DISEÑO PERSONALIZADO",
+    description:
+      "Un mueble inspirado en Nintendo Switch, con iluminación LED y detalles de Mario Bros. Una idea diferente, hecha realidad en nuestro taller.",
+    image: "/images/mueble-switch.jpg",
+    video:
+      "https://res.cloudinary.com/dyqcjrmmt/video/upload/v1747867104/Nintendo_v7jwss.mp4",
+  },
+  {
+    title: "Carrito de pollo asado",
+    category: "EQUIPAMIENTO GASTRONÓMICO",
+    description:
+      "Carrito profesional con sistema rotatorio y vitrina para exhibir tus preparaciones. Fabricado para acompañar tu emprendimiento.",
+    image: "/images/carrito-pollo.jpg",
+  },
+  {
+    title: "Freidora industrial",
+    category: "ACERO INOXIDABLE",
+    description:
+      "Equipo de acero inoxidable diseñado para facilitar la limpieza y responder al ritmo de una cocina profesional.",
+    image: "/images/freidora-industrial.jpg",
+  },
+  {
+    title: "Estructura para escenario",
+    category: "METAL MECÁNICA",
+    description:
+      "Estructura metálica para eventos, fabricada con atención a cada unión y a las necesidades de montaje del proyecto.",
+    image: "/images/estructura-escenario.jpg",
+  },
+  {
+    title: "Carrito de salchipapas",
+    category: "EQUIPAMIENTO GASTRONÓMICO",
+    description:
+      "Carrito de acero inoxidable con plancha, freidora y espacio de trabajo personalizado para tu emprendimiento.",
+    image: "/images/carrito-salchipapas.jpg",
+  },
+];
 
 export default function PortfolioSection() {
   const [selectedProject, setSelectedProject] = useState(null);
 
-  useStaggeredFadeIn('.project-card');
-
-  const projects = [
-    {
-      title: "Mueble Switch Mario",
-      description: "Diseño gamer con estilo: mueble inspirado en Nintendo Switch con iluminación LED y detalles de Mario Bros. Ideal para fans que quieren destacar su setup.",
-      image: "https://res.cloudinary.com/dyqcjrmmt/video/upload/v1747867104/Nintendo_v7jwss.mp4"
-    },
-    {
-      title: "Cocina Industrial a Gas",
-      description: "Eficiencia para tu cocina profesional: 6 quemadores, acero inoxidable resistente, sistema de seguridad avanzado y fácil limpieza.",
-      image: "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745347107/cocina_industrial_r8jzdu.jpg"
-    },
-    {
-      title: "Freidora Industrial",
-      description: "Resultados crujientes con menor consumo de aceite: freidora de 25L con zona fría, control de temperatura y diseño para alto rendimiento.",
-      image: "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745347107/freidora_industrial_lgajm4.jpg"
-    },
-    {
-      title: "Carrito de Pollo Asado",
-      description: "Carrito profesional para 12 pollos, vitrina térmica iluminada, sistema rotatorio eficiente. Tu emprendimiento de comida móvil, listo para despegar.",
-      image: "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745347106/carrito_pollo_j4zkjs.jpg"
-    },
-    {
-      title: "Carrito Salchipapas",
-      description: "Emprende con estilo: carrito completo en acero inoxidable, plancha de 80x50cm, freidora de 10L y espacio personalizado. Ideal para ferias y plazas.",
-      image: "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745347107/carrito_salchipapas_swymym.jpg"
-    },
-    {
-      title: "Estructura Escenario",
-      description: "Escenarios seguros y funcionales: estructura galvanizada, carga de 750kg/m², nivelación adaptable a terrenos irregulares. Perfecto para eventos profesionales.",
-      image: "https://res.cloudinary.com/dyqcjrmmt/image/upload/v1745347107/estructura_escenario_avymqy.jpg"
-    }
-  ];
-
   return (
-    <section id="portafolio" className="w-full py-16 bg-gray-100 text-black">
-      <div className="container mx-auto px-4 md:px-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Proyectos Destacados</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <section
+      id="portafolio"
+      className="portfolio-section section-space"
+      aria-labelledby="portfolio-title"
+    >
+      <div className="site-container">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">02 / DEL TALLER AL MUNDO</span>
+            <h2 id="portfolio-title">
+              MENOS PALABRAS.
+              <br />
+              <span>MÁS HECHOS.</span>
+            </h2>
+          </div>
+          <div className="section-heading-aside">
+            <p>
+              Cada pieza tiene una historia.
+              <br />
+              Estos son algunos de nuestros trabajos.
+            </p>
+            <Link className="text-link" to="/projects">
+              Ver todos los proyectos <MoveRight size={18} aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+        <div className="portfolio-grid">
           {projects.map((project, index) => (
-            <ProjectCard key={index} {...project} onOpen={() => setSelectedProject(project)} />
+            <button
+              className="portfolio-card"
+              key={project.title}
+              onClick={() => setSelectedProject(project)}
+              aria-label={"Ver proyecto: " + project.title}
+            >
+              <div className="portfolio-image">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  loading="lazy"
+                  decoding="async"
+                  width="900"
+                  height="700"
+                />
+                <span className="project-index">0{index + 1}</span>
+                {project.video && (
+                  <span className="project-play">
+                    <Play size={21} fill="currentColor" aria-hidden="true" />
+                    <span>Ver video</span>
+                  </span>
+                )}
+                <span className="project-open">
+                  <ArrowUpRight size={22} aria-hidden="true" />
+                </span>
+              </div>
+              <div className="portfolio-caption">
+                <span>{project.category}</span>
+                <h3>{project.title}</h3>
+              </div>
+            </button>
           ))}
+        </div>
+        <div className="portfolio-footer">
+          <p>¿El próximo proyecto? Podría ser el tuyo.</p>
+          <a href="#contacto" className="text-link">
+            Empecemos a crearlo <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
         </div>
       </div>
       {selectedProject && (
-        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+        <Modal
+          title={selectedProject.title}
+          onClose={() => setSelectedProject(null)}
+        >
+          {selectedProject.video ? (
+            <video
+              src={selectedProject.video}
+              poster={selectedProject.image}
+              className="project-modal-media"
+              controls
+              playsInline
+              preload="metadata"
+            />
+          ) : (
+            <img
+              className="project-modal-media"
+              src={selectedProject.image}
+              alt={selectedProject.title}
+            />
+          )}
+          <span className="eyebrow modal-category">
+            {selectedProject.category}
+          </span>
+          <p className="modal-description">{selectedProject.description}</p>
+          <a
+            className="site-button button-primary"
+            href="#contacto"
+            onClick={() => setSelectedProject(null)}
+          >
+            Quiero un proyecto así <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
+        </Modal>
       )}
     </section>
   );

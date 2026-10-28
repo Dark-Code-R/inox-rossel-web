@@ -1,0 +1,154 @@
+﻿/* Critical styles: the loading screen appears before the application bundle. */
+.is-site-loading body {
+  overflow: hidden;
+}
+#site-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  background: #0b2336;
+  color: #effaff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.34s ease,
+    visibility 0.34s ease;
+  isolation: isolate;
+}
+#site-loader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(#82dcdf09 1px, transparent 1px),
+    linear-gradient(90deg, #82dcdf09 1px, transparent 1px),
+    radial-gradient(ellipse at center, #11607035, transparent 60%);
+  background-size:
+    38px 38px,
+    38px 38px,
+    100% 100%;
+  z-index: -1;
+}
+#site-loader.site-loader-leaving {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+#site-loader .loader-symbol {
+  position: relative;
+  width: 82px;
+  height: 82px;
+  margin-bottom: 2px;
+}
+#site-loader .loader-symbol::before {
+  content: "";
+  position: absolute;
+  inset: -18px;
+  border: 1px solid #6ce6dd20;
+  border-radius: 16px;
+  transform: rotate(45deg);
+}
+#site-loader .loader-symbol i {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  background: #71e4da;
+  animation: inox-loader-build 1.8s ease-in-out infinite;
+}
+#site-loader .loader-symbol i:first-child {
+  left: 0;
+  top: 0;
+}
+#site-loader .loader-symbol i:last-child {
+  bottom: 0;
+  right: 0;
+  box-shadow: -5px -5px 0 #0b2336;
+  animation-delay: 0.15s;
+}
+#site-loader .loader-name {
+  text-align: center;
+  font-size: 27px;
+  font-weight: 400;
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+#site-loader .loader-name strong {
+  font-weight: 750;
+}
+#site-loader .loader-name em {
+  font-style: normal;
+  color: #71e4da;
+}
+#site-loader .loader-name small {
+  display: block;
+  margin-top: 11px;
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 5px;
+  color: #a3c7d9;
+}
+#site-loader .loader-progress {
+  width: 175px;
+  height: 2px;
+  background: #284b60;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+#site-loader .loader-progress span {
+  display: block;
+  width: 48%;
+  height: 100%;
+  background: #71e4da;
+  animation: inox-loader-track 1.5s ease-in-out infinite;
+}
+#site-loader .loader-message {
+  margin: 0;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  color: #9bbecf;
+}
+#site-loader .loader-signature {
+  position: absolute;
+  bottom: max(32px, env(safe-area-inset-bottom));
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: #6d94aa;
+}
+@keyframes inox-loader-build {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(3px, -3px);
+    opacity: 0.65;
+  }
+}
+@keyframes inox-loader-track {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #site-loader {
+    transition: none;
+  }
+  #site-loader .loader-symbol i,
+  #site-loader .loader-progress span {
+    animation: none;
+  }
+  #site-loader .loader-progress span {
+    width: 65%;
+  }
+}

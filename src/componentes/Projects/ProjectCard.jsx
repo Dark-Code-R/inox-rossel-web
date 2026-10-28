@@ -1,75 +1,35 @@
-import React, { useState, useEffect } from "react";
+﻿/* eslint-disable react/prop-types -- Component props follow the project's JSX convention. */
+import { ArrowUpRight } from "lucide-react";
+import ProjectImage from "./ProjectImage";
 
-export default function Modal({ onClose, title, description, imageUrl }) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
-
-  // Cerrar modal al hacer clic fuera
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  // Cerrar modal con tecla Escape
-  useEffect(() => {
-    const handleEscKey = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    
-    window.addEventListener('keydown', handleEscKey);
-    return () => window.removeEventListener('keydown', handleEscKey);
-  }, [onClose]);
-
-  // Prevenir scroll del body cuando el modal está abierto
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
-
+export default function ProjectCard({ project, index, categoryName, onOpen }) {
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      onClick={handleBackdropClick}
+    <button
+      className="catalog-card"
+      onClick={onOpen}
+      aria-label={"Ver proyecto: " + project.title}
     >
-      <div className="bg-white rounded-lg p-6 max-w-lg mx-auto shadow-lg relative animate-fade-in-up overflow-auto max-h-[90vh]">
-        <button
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl font-bold"
-          onClick={onClose}
-        >
-          &times;
-        </button>
-        
-        {imageError ? (
-          <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-md mb-4">
-            <span className="text-gray-500">Imagen no disponible</span>
-          </div>
-        ) : (
-          <div className="relative w-full max-h-64 mb-4">
-            {!imageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-md">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800"></div>
-              </div>
-            )}
-            <img
-              src={imageUrl}
-              alt={title}
-              className={`w-full h-auto max-h-64 object-contain rounded-md ${
-                imageLoaded ? "opacity-100" : "opacity-0"
-              }`}
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageError(true)}
-            />
-          </div>
-        )}
-        
-        <h3 className="text-2xl font-bold text-center mb-4">{title}</h3>
-        <p className="text-gray-700 text-center">{description}</p>
+      <div className="catalog-card-visual">
+        <ProjectImage
+          src={project.imageUrl}
+          alt={project.title}
+          eager={index < 3}
+        />
+        <span className="catalog-card-number">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <span className="catalog-card-arrow">
+          <ArrowUpRight size={23} aria-hidden="true" />
+        </span>
       </div>
-    </div>
+      <div className="catalog-card-copy">
+        <span className="catalog-card-category">{categoryName}</span>
+        <h3>{project.title}</h3>
+        <p>{project.description}</p>
+        <span className="catalog-card-detail">
+          Conocer el proyecto <ArrowUpRight size={15} aria-hidden="true" />
+        </span>
+      </div>
+    </button>
   );
 }

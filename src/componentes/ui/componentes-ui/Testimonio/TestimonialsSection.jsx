@@ -1,198 +1,227 @@
-// componentes/ui/TestimonialsSection.jsx
-import React, { useEffect, useState, useRef } from 'react';
-import { db, auth } from '../../../../firebaseConfig';
-import { collection, addDoc, getDocs, query, orderBy } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
-import anime from 'animejs/lib/anime.es.js';
-
-function TestimonialCard({ nombre, texto, index }) {
-  const cardRef = useRef(null);
-
-  useEffect(() => {
-    const el = cardRef.current;
-
-    anime({
-      targets: el,
-      translateY: [50, 0],
-      opacity: [0, 1],
-      scale: [0.9, 1],
-      easing: 'easeOutElastic(1, .8)',
-      duration: 800,
-      delay: index * 150,
-    });
-
-    const bounceLoop = () => {
-      anime({
-        targets: el,
-        translateY: [0, -8, 0],
-        duration: 2500,
-        easing: 'easeInOutQuad',
-        complete: bounceLoop,
-      });
-    };
-
-    bounceLoop();
-
-    const handleMouseEnter = () => {
-      anime({
-        targets: el,
-        scale: 1.05,
-        duration: 300,
-        easing: 'easeOutQuad',
-      });
-    };
-
-    const handleMouseLeave = () => {
-      anime({
-        targets: el,
-        scale: 1,
-        duration: 300,
-        easing: 'easeOutQuad',
-      });
-    };
-
-    el.addEventListener('mouseenter', handleMouseEnter);
-    el.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      el.removeEventListener('mouseenter', handleMouseEnter);
-      el.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [index]);
-
-  return (
-    <div
-      ref={cardRef}
-      className="bg-white p-6 rounded-lg shadow-md border border-gray-200 transition duration-300"
-      style={{ opacity: 0 }}
-    >
-      <p className="text-gray-700 italic mb-4">"{texto}"</p>
-      <div className="text-right font-semibold text-black">— {nombre}</div>
-    </div>
-  );
-}
+﻿import { useEffect, useState } from "react";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  LoaderCircle,
+  MessageSquareQuote,
+  Quote,
+  Send,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { db, auth } from "../../../../firebaseConfig";
 
 export default function TestimonialsSection() {
   const [testimonios, setTestimonios] = useState([]);
-  const [nuevoComentario, setNuevoComentario] = useState('');
+  const [nuevoComentario, setNuevoComentario] = useState("");
   const [usuarioGoogle, setUsuarioGoogle] = useState(null);
   const [isGuest, setIsGuest] = useState(false);
-  const sectionRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [feedback, setFeedback] = useState("");
 
   useEffect(() => {
-    const obtenerTestimonios = async () => {
-      const testimoniosRef = collection(db, 'testimonios');
-      const q = query(testimoniosRef, orderBy('fecha', 'desc'));
-      const querySnapshot = await getDocs(q);
-      const docs = querySnapshot.docs.map(doc => doc.data());
-      setTestimonios(docs);
-    };
-
-    obtenerTestimonios();
-
-    anime({
-      targets: '.testimonials-title',
-      opacity: [0, 1],
-      translateY: [30, 0],
-      easing: 'easeOutExpo',
-      duration: 1000,
-      delay: 300,
-    });
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && user.providerData[0]?.providerId === 'google.com') {
-        setUsuarioGoogle(user);
-        setIsGuest(false);
-      } else {
-        setUsuarioGoogle(null);
-        const userRole = localStorage.getItem('userRole');
-        setIsGuest(userRole === 'guest');
+    let active = true;
+    // Firestore can retry indefinitely offline; keep the rest of the section usable.
+    const loadingTimeout = window.setTimeout(() => {
+      if (active) {
+        setLoadError(true);
+        setLoading(false);
       }
-    });
-
-    return () => unsubscribe();
+    }, 8000);
+    getDocs(query(collection(db, "testimonios"), orderBy("fecha", "desc")))
+      .then((snapshot) => {
+        if (active) {
+          setTestimonios(
+            snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })),
+          );
+          setLoadError(false);
+        }
+      })
+      .catch((error) => {
+        if (active) setLoadError(true);
+        console.warn("No se pudieron cargar los testimonios:", error);
+      })
+      .finally(() => {
+        window.clearTimeout(loadingTimeout);
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+      window.clearTimeout(loadingTimeout);
+    };
   }, []);
 
-  const enviarTestimonio = async (e) => {
-    e.preventDefault();
-    if (!nuevoComentario.trim()) return;
+  useEffect(
+    () =>
+      onAuthStateChanged(auth, (user) => {
+        setUsuarioGoogle(
+          user?.providerData.some(
+            (provider) => provider.providerId === "google.com",
+          )
+            ? user
+            : null,
+        );
+        setIsGuest(!user && localStorage.getItem("userRole") === "guest");
+      }),
+    [],
+  );
 
+  const enviarTestimonio = async (event) => {
+    event.preventDefault();
+    if (!nuevoComentario.trim() || !usuarioGoogle || sending) return;
+    setSending(true);
+    setFeedback("");
     try {
-      await addDoc(collection(db, 'testimonios'), {
+      await addDoc(collection(db, "testimonios"), {
         nombre: usuarioGoogle.displayName,
-        texto: nuevoComentario,
+        texto: nuevoComentario.trim(),
         fecha: new Date(),
       });
-      setNuevoComentario('');
-
-      const testimoniosRef = collection(db, 'testimonios');
-      const q = query(testimoniosRef, orderBy('fecha', 'desc'));
-      const querySnapshot = await getDocs(q);
-      const docs = querySnapshot.docs.map(doc => doc.data());
-      setTestimonios(docs);
+      setNuevoComentario("");
+      setFeedback("success");
+      const snapshot = await getDocs(
+        query(collection(db, "testimonios"), orderBy("fecha", "desc")),
+      );
+      setTestimonios(
+        snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })),
+      );
+      setLoadError(false);
     } catch (error) {
+      setFeedback("error");
       console.error("Error al enviar testimonio:", error);
+    } finally {
+      setSending(false);
     }
   };
 
   return (
-    <section ref={sectionRef} className="w-full py-16 bg-gray-100 text-black animate-fade-in">
-      <div className="container mx-auto px-4 md:px-6">
-        <h2 className="testimonials-title text-2xl md:text-3xl font-bold text-center mb-8" style={{ opacity: 0 }}>
-          Lo que dicen los clientes
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {testimonios.map((t, i) => (
-            <TestimonialCard key={i} index={i} nombre={t.nombre} texto={t.texto} />
-          ))}
+    <section
+      className="testimonials-section section-space"
+      aria-labelledby="testimonials-title"
+    >
+      <div className="site-container">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">04 / LA MEJOR CARTA DE PRESENTACIÓN</span>
+            <h2 id="testimonials-title">
+              PIEZAS QUE HABLAN.
+              <br />
+              <span>CLIENTES TAMBIÉN.</span>
+            </h2>
+          </div>
+          <p>
+            Detrás de cada trabajo hay alguien que confió en nosotros. Este
+            espacio es para sus experiencias.
+          </p>
         </div>
-
-        {usuarioGoogle && (
-          <form onSubmit={enviarTestimonio} className="max-w-lg mx-auto mt-8">
-            <textarea
-              value={nuevoComentario}
-              onChange={(e) => setNuevoComentario(e.target.value)}
-              className="w-full p-4 border rounded-md resize-none focus:ring-2 focus:ring-[#FFD166] focus:border-transparent transition duration-300"
-              rows="4"
-              placeholder="Escribe tu testimonio aquí..."
-            />
-            <button
-              type="submit"
-              className="mt-4 w-full bg-[#FFD166] text-[#123347] font-semibold py-3 rounded-full hover:brightness-110 transition-all duration-300"
-            >
-              Enviar Testimonio
-            </button>
-          </form>
-        )}
-
-        {!usuarioGoogle && isGuest && (
-          <div className="animate-slide-bounce text-center mt-8 p-4 bg-white rounded-lg shadow-md max-w-lg mx-auto border-l-4 border-[#FFD166]">
-            <p className="text-gray-700">
-              Estás navegando como invitado. Para dejar un comentario,
-              <a href="/" className="text-blue-600 hover:underline ml-1">inicia sesión con Google</a>.
-            </p>
+        {loading ? (
+          <div className="testimonials-loading" role="status">
+            <LoaderCircle
+              className="loading-spinner"
+              size={20}
+              aria-hidden="true"
+            />{" "}
+            Cargando experiencias de nuestros clientes...
+          </div>
+        ) : testimonios.length > 0 ? (
+          <div className="testimonials-grid">
+            {testimonios.map((testimonial) => (
+              <figure className="testimonial-card" key={testimonial.id}>
+                <Quote
+                  size={30}
+                  className="testimonial-quote"
+                  aria-hidden="true"
+                />
+                <blockquote>{testimonial.texto}</blockquote>
+                <figcaption>
+                  <span className="testimonial-avatar" aria-hidden="true">
+                    {(testimonial.nombre || "C").slice(0, 1).toUpperCase()}
+                  </span>
+                  <span>
+                    {testimonial.nombre || "Cliente de Inox Rossel"}
+                    <small>UNA EXPERIENCIA CON NUESTRO TALLER</small>
+                  </span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        ) : (
+          <div className="testimonial-empty">
+            <span className="empty-quote-icon">
+              <MessageSquareQuote size={30} aria-hidden="true" />
+            </span>
+            <div>
+              <h3>Tu experiencia también forma parte de nuestra historia.</h3>
+              <p>
+                {loadError
+                  ? "Los comentarios no están disponibles en este momento. Si ya trabajamos juntos, nos encantará conocer tu opinión."
+                  : "¿Ya creamos algo para ti? Cuéntanos cómo fue trabajar con nuestro taller."}
+              </p>
+            </div>
+            <span className="empty-decoration" aria-hidden="true">
+              “
+            </span>
           </div>
         )}
-
-        {!usuarioGoogle && !isGuest && (
-          <p className="text-center text-gray-500 mt-8 animate-slide-bounce">Inicia sesión con Google para dejar un comentario ✨</p>
+        {usuarioGoogle ? (
+          <form className="testimonial-form" onSubmit={enviarTestimonio}>
+            <label htmlFor="testimonial-message">
+              Hola, {usuarioGoogle.displayName}. ¿Cómo fue tu experiencia?
+            </label>
+            <textarea
+              id="testimonial-message"
+              value={nuevoComentario}
+              onChange={(event) => setNuevoComentario(event.target.value)}
+              rows={3}
+              maxLength={2000}
+              placeholder="Comparte tu experiencia con Inox Rossel..."
+              required
+            />
+            <div aria-live="polite">
+              {feedback === "success" && (
+                <p className="form-status status-success">
+                  <CheckCircle2 size={18} aria-hidden="true" /> ¡Gracias por
+                  compartir tu experiencia!
+                </p>
+              )}
+              {feedback === "error" && (
+                <p className="form-status status-error">
+                  No pudimos publicar tu comentario. Intenta de nuevo.
+                </p>
+              )}
+            </div>
+            <button
+              className="site-button button-dark"
+              type="submit"
+              disabled={sending}
+            >
+              {sending ? "Publicando..." : "Compartir mi experiencia"}
+              <Send size={17} aria-hidden="true" />
+            </button>
+          </form>
+        ) : (
+          <div className="testimonial-login">
+            <span>
+              {isGuest
+                ? "Estás navegando como invitado. Comparte tu experiencia al iniciar sesión."
+                : "¿Ya trabajamos juntos? Nos encantaría leerte."}
+            </span>
+            <Link className="text-link" to="/login">
+              Inicia sesión para comentar{" "}
+              <ArrowUpRight size={16} aria-hidden="true" />
+            </Link>
+          </div>
         )}
       </div>
-
-      <style jsx="true">{`
-        @keyframes slideBounce {
-          0% { opacity: 0; transform: translateY(40px); }
-          50% { opacity: 1; transform: translateY(-5px); }
-          100% { transform: translateY(0); }
-        }
-
-        .animate-slide-bounce {
-          animation: slideBounce 1.2s ease-out;
-        }
-      `}</style>
     </section>
   );
 }
